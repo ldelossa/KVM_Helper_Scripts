@@ -17,11 +17,11 @@ while [[ $# > 0 ]]; do
 shift
 done
 
-echo "Name $NAME"
-
 [[ ${LIST} -eq "1" ]] && { virsh list --all | awk 'NR >= 2 { print $2 }' | sed '/^\s*$/d'; exit 0; }
 
 [[ -z ${NAME} ]] && { printf "Correct arguments not supplied \n -n | --name\n -l | --list\n"; exit 1; }
+
+echo "Name $NAME"
 
 MAC=$(virsh dumpxml "${NAME}" | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
 printf "%s's MAC address is: %s \n" $NAME $MAC

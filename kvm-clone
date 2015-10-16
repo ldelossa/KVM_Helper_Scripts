@@ -4,10 +4,14 @@
 #		-o, --original: original image name
 #		-c, --clone: name of cloned image
 #               -p, --poweron: power on and connect via SSH
+#		-l, --list: lists vms
 while [[ $# > 0 ]]; do
     key="$1"
    #printf "%s is now being checked \n" $key
     case $key in 
+        -l | --list)
+        LIST=1
+        ;;
 	-s | --sysprep)
 	SYSPREPOPT=1
 	;;
@@ -25,6 +29,8 @@ while [[ $# > 0 ]]; do
     esac
 shift
 done
+
+[[ ${LIST} -eq "1" ]] && { virsh list --all | awk 'NR >= 2 { print $2 }' | sed '/^\s*$/d'; exit 0; }
 
 #[[ SYSPREPOPT -eq "1" ]]  && echo "Sys-Prep of original image selected"
 #printf "Original path of image: %s\n" $ORIGINALPATH
