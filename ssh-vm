@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#arguments
+#   -n, --name: optionally sysprep original ima
+while [[ $# > 0 ]]; do
+    key="$1"
+    case $key in
+	-n | --name)
+	NAME="$2"
+	shift
+	;;
+    esac
+shift
+done
+
+echo "Name $NAME"
+
+[[ -z ${NAME} ]] && { printf "Correct arguments not supplied \n -n | --name\n"; exit 1; }
+
+MAC=$(virsh dumpxml "${NAME}" | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
+printf "%s's MAC address is: %s \n" $NAME $MAC
+#extract IP address
+ARPLOC=$(which arp)
+
+until [[ -n $IP ]]; do
+ IP=$($ARPLOC | grep $MAC | awk '{print $1}')
+ done
+
+printf "%s's IP address is: %s \n" $NAME $IP
+
+exec ssh root@${IP}
