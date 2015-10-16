@@ -1,10 +1,14 @@
 #!/bin/bash
 
 #arguments
-#   -n, --name:
+#   -n, --name - name of vm
+#   -l, --list - list active vms
 while [[ $# > 0 ]]; do
     key="$1"
     case $key in
+        -l | --list)
+        LIST=1
+        ;;
 	-n | --name)
 	NAME="$2"
 	shift
@@ -15,7 +19,9 @@ done
 
 echo "Name $NAME"
 
-[[ -z ${NAME} ]] && { printf "Correct arguments not supplied \n -n | --name\n"; exit 1; }
+[[ ${LIST} -eq "1" ]] && { virsh list --all | awk 'NR >= 2 { print $2 }' | sed '/^\s*$/d'; exit 0; }
+
+[[ -z ${NAME} ]] && { printf "Correct arguments not supplied \n -n | --name\n -l | --list\n"; exit 1; }
 
 MAC=$(virsh dumpxml "${NAME}" | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
 printf "%s's MAC address is: %s \n" $NAME $MAC
