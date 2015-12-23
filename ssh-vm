@@ -24,6 +24,7 @@ done
 echo "Name $NAME"
 
 MAC=$(virsh dumpxml "${NAME}" | grep -o -E '([[:xdigit:]]{1,2}:){5}[[:xdigit:]]{1,2}')
+[[ -z ${MAC} ]]  && { exit 1; }
 printf "%s's MAC address is: %s \n" $NAME $MAC
 #extract IP address
 ARPLOC=$(which arp)
